@@ -44,16 +44,39 @@
   border-radius: 999px;
 }
 
+// Horizontal scroller: cards sit in a single row that scrolls sideways
+// rather than wrapping onto multiple lines.
 .course-card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+  display: flex;
+  flex-direction: row;
   align-items: stretch;
+  gap: 20px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 4px 14px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: #c7ccd6 transparent;
+
+  // Each card keeps a fixed width and never shrinks/grows.
+  > .course-card {
+    flex: 0 0 300px;
+    max-width: 300px;
+    scroll-snap-align: start;
+  }
+
+  &::-webkit-scrollbar { height: 8px; }
+  &::-webkit-scrollbar-thumb {
+    background: #c7ccd6;
+    border-radius: 999px;
+  }
+  &::-webkit-scrollbar-track { background: transparent; }
 }
 
 @media (max-width: 575px) {
-  .course-card-grid {
-    grid-template-columns: 1fr;
+  .course-card-grid > .course-card {
+    flex-basis: 80%;
+    max-width: 80%;
   }
 }
 
