@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { useIsCollapsed } from './hooks';
 import CourseList from '.';
@@ -23,7 +24,7 @@ describe('CourseList', () => {
   useIsCollapsed.mockReturnValue(false);
 
   const renderList = (courseListData = defaultCourseListData) => (
-    render(<CourseList courseListData={courseListData} />)
+    render(<IntlProvider locale="en"><CourseList courseListData={courseListData} /></IntlProvider>)
   );
 
   describe('no courses or filters', () => {

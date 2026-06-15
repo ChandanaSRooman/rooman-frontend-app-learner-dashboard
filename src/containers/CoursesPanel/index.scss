@@ -7,7 +7,54 @@
 
 .course-list-title {
   font-size: var(--pgn-typography-font-size-h2-base);
+  font-weight: 700;
   margin: var(--pgn-spacing-spacer-3) 0;
+}
+
+// ── Sectioned grid (DeepLearning.AI-style) ────────────────────────────────────
+.course-section {
+  margin-bottom: var(--pgn-spacing-spacer-5, 2rem);
+}
+
+.course-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 16px;
+}
+
+.course-section-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1c1d1f;
+  margin: 0;
+}
+
+.course-section-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 8px;
+  background: #eef2ff;
+  color: #0056d2;
+  font-size: .72rem;
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.course-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+
+@media (max-width: 575px) {
+  .course-card-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .course-list-loading {

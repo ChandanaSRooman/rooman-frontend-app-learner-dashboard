@@ -30,6 +30,10 @@ $input-focus-box-shadow: var(--pgn-elevation-form-input-base); // hack to get up
 
   main {
     flex-grow: 1;
+    // Light neutral canvas so the white course cards lift off the page,
+    // matching the DeepLearning.AI dashboard look.
+    background: #f4f5f7;
+    padding-bottom: 2rem;
   }
 
   header {
