@@ -28,7 +28,7 @@ export const CoursesPanel = () => {
   const {
     filters, sortBy, pageNumber, setPageNumber,
   } = useFilters();
-  const { visibleList, numPages } = useMemo(() => {
+  const { fullList, visibleList, numPages } = useMemo(() => {
     let transformedCourses = [];
     if (data?.courses?.length) {
       transformedCourses = getTransformedCourseDataList(data.courses);
@@ -52,6 +52,7 @@ export const CoursesPanel = () => {
     filterOptions: filters,
     setPageNumber,
     numPages,
+    fullList,
     visibleList,
     showFilters: filters.length > 0,
   };

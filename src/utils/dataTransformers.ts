@@ -53,11 +53,16 @@ const getVisibleList = (courses: any[], filters: string[], sortBy: string, pageN
 
   if (pageSize === 0) {
     return {
+      fullList: list,
       visibleList: list,
       numPages: 1,
     };
   }
   const result = {
+    // `fullList` is the complete filtered/sorted set so consumers can group it
+    // (e.g. into dashboard sections) without the per-page distortion that
+    // sectioning the paginated slice would cause.
+    fullList: list,
     visibleList: list.slice((pageNumber - 1) * pageSize, pageNumber * pageSize),
     numPages: Math.ceil(list.length / pageSize),
   };
