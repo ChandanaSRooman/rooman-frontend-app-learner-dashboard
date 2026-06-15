@@ -2,11 +2,6 @@ import { render, screen } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import CourseCard from '.';
-import hooks from './hooks';
-
-jest.mock('./hooks', () => ({
-  useIsCollapsed: jest.fn(),
-}));
 
 const namesMockComponents = [
   'CourseCardBanners',
@@ -15,6 +10,7 @@ const namesMockComponents = [
   'CourseCardActions',
   'CourseCardDetails',
   'CourseCardTitle',
+  'CourseCardFavorite',
 ];
 
 jest.mock('./components/CourseCardBanners', () => jest.fn(() => <div>CourseCardBanners</div>));
@@ -23,28 +19,25 @@ jest.mock('./components/CourseCardMenu', () => jest.fn(() => <div>CourseCardMenu
 jest.mock('./components/CourseCardActions', () => jest.fn(() => <div>CourseCardActions</div>));
 jest.mock('./components/CourseCardDetails', () => jest.fn(() => <div>CourseCardDetails</div>));
 jest.mock('./components/CourseCardTitle', () => jest.fn(() => <div>CourseCardTitle</div>));
+jest.mock('./components/CourseCardFavorite', () => jest.fn(() => <div>CourseCardFavorite</div>));
 
 const cardId = 'test-card-id';
 
+const renderCard = () => render(
+  <IntlProvider locale="en"><CourseCard cardId={cardId} /></IntlProvider>,
+);
+
 describe('CourseCard component', () => {
-  it('collapsed', () => {
-    hooks.useIsCollapsed.mockReturnValueOnce(true);
-    render(<IntlProvider locale="en"><CourseCard cardId={cardId} /></IntlProvider>);
+  it('renders the image inside the vertical media wrapper', () => {
+    renderCard();
     const cardImage = screen.getByText('CourseCardImage');
-    expect(cardImage.parentElement).not.toHaveClass('d-flex');
+    expect(cardImage.parentElement).toHaveClass('course-card-media');
   });
-  it('not collapsed', () => {
-    hooks.useIsCollapsed.mockReturnValueOnce(false);
-    render(<IntlProvider locale="en"><CourseCard cardId={cardId} /></IntlProvider>);
-    const cardImage = screen.getByText('CourseCardImage');
-    expect(cardImage.parentElement).toHaveClass('d-flex');
-  });
+
   it('renders courseCard child components', () => {
-    hooks.useIsCollapsed.mockReturnValueOnce(false);
-    render(<IntlProvider locale="en"><CourseCard cardId={cardId} /></IntlProvider>);
-    namesMockComponents.map((courseCardName) => {
-      const courseCardComponent = screen.getByText(courseCardName);
-      return expect(courseCardComponent).toBeInTheDocument();
+    renderCard();
+    namesMockComponents.forEach((courseCardName) => {
+      expect(screen.getByText(courseCardName)).toBeInTheDocument();
     });
   });
 });
