@@ -2,33 +2,31 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Pagination } from '@openedx/paragon';
 import {
   ActiveCourseFilters,
 } from 'containers/CourseFilterControls';
 import CourseCard from 'containers/CourseCard';
 
-import { useIsCollapsed } from './hooks';
 import messages from './messages';
 
-// Split the (already filtered + sorted) list into the three dashboard groups.
+// Split the (already filtered + sorted) list into the dashboard groups.
 // Each item is a transformed course object carrying its own `cardId`.
 const groupCourses = (list) => {
   const inProgress = [];
   const notStarted = [];
-  const completed = [];
+  const archived = [];
   list.forEach((course) => {
     const isArchived = course?.courseRun?.isArchived || false;
     const hasStarted = course?.enrollment?.hasStarted || false;
     if (isArchived) {
-      completed.push(course);
+      archived.push(course);
     } else if (hasStarted) {
       inProgress.push(course);
     } else {
       notStarted.push(course);
     }
   });
-  return { inProgress, notStarted, completed };
+  return { inProgress, notStarted, archived };
 };
 
 const CourseSection = ({ title, courses }) => {
@@ -54,12 +52,11 @@ CourseSection.propTypes = {
 
 export const CourseList = ({ courseListData }) => {
   const { formatMessage } = useIntl();
-  const {
-    setPageNumber, numPages, visibleList, showFilters,
-  } = courseListData;
+  const { fullList, visibleList, showFilters } = courseListData;
 
-  const isCollapsed = useIsCollapsed();
-  const { inProgress, notStarted, completed } = groupCourses(visibleList);
+  // Group the complete filtered/sorted set (not the paginated page) so the
+  // section headings and counts reflect group totals rather than per-page slices.
+  const { inProgress, notStarted, archived } = groupCourses(fullList ?? visibleList ?? []);
 
   return (
     <>
@@ -71,16 +68,7 @@ export const CourseList = ({ courseListData }) => {
       <div className="d-flex flex-column flex-grow-1">
         <CourseSection title={formatMessage(messages.inProgressSection)} courses={inProgress} />
         <CourseSection title={formatMessage(messages.notStartedSection)} courses={notStarted} />
-        <CourseSection title={formatMessage(messages.completedSection)} courses={completed} />
-        {numPages > 1 && (
-          <Pagination
-            variant={isCollapsed ? 'reduced' : 'secondary'}
-            paginationLabel="Course List"
-            className="mx-auto mb-2"
-            pageCount={numPages}
-            onPageSelect={setPageNumber}
-          />
-        )}
+        <CourseSection title={formatMessage(messages.archivedSection)} courses={archived} />
       </div>
     </>
   );
@@ -89,8 +77,9 @@ export const CourseList = ({ courseListData }) => {
 export const courseListDataShape = PropTypes.shape({
   showFilters: PropTypes.bool.isRequired,
   visibleList: PropTypes.arrayOf(PropTypes.shape()).isRequired,
-  numPages: PropTypes.number.isRequired,
-  setPageNumber: PropTypes.func.isRequired,
+  fullList: PropTypes.arrayOf(PropTypes.shape()),
+  numPages: PropTypes.number,
+  setPageNumber: PropTypes.func,
 });
 
 CourseList.propTypes = {

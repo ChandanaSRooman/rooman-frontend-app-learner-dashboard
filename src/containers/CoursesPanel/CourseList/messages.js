@@ -11,10 +11,10 @@ const messages = defineMessages({
     description: 'Heading for the group of enrolled courses the learner has not started yet',
     defaultMessage: 'Not started',
   },
-  completedSection: {
-    id: 'learner-dash.courseList.section.completed',
-    description: 'Heading for the group of courses that are archived/completed',
-    defaultMessage: 'Completed',
+  archivedSection: {
+    id: 'learner-dash.courseList.section.archived',
+    description: 'Heading for the group of courses whose run has ended (archived)',
+    defaultMessage: 'Archived',
   },
 });
 

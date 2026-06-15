@@ -1,12 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
-import { useIsCollapsed } from './hooks';
 import CourseList from '.';
-
-jest.mock('./hooks', () => ({
-  useIsCollapsed: jest.fn(),
-}));
 
 jest.mock('containers/CourseCard', () => jest.fn(() => <div>CourseCard</div>));
 jest.mock('containers/CourseFilterControls', () => ({
@@ -19,9 +14,9 @@ describe('CourseList', () => {
     numPages: 1,
     setPageNumber: jest.fn().mockName('setPageNumber'),
     showFilters: false,
+    fullList: [],
     visibleList: [],
   };
-  useIsCollapsed.mockReturnValue(false);
 
   const renderList = (courseListData = defaultCourseListData) => (
     render(<IntlProvider locale="en"><CourseList courseListData={courseListData} /></IntlProvider>)
@@ -30,53 +25,36 @@ describe('CourseList', () => {
   describe('no courses or filters', () => {
     it('should not render related components', () => {
       renderList();
-      const filterControls = screen.queryByText('ActiveCourseFilters');
-      const courseCard = screen.queryByText('CourseCard');
-      const prevButton = screen.queryByRole('button', { name: 'Previous' });
-      expect(filterControls).toBeNull();
-      expect(courseCard).toBeNull();
-      expect(prevButton).toBeNull();
+      expect(screen.queryByText('ActiveCourseFilters')).toBeNull();
+      expect(screen.queryByText('CourseCard')).toBeNull();
     });
   });
+
   describe('with filters', () => {
     it('should render filter component', () => {
-      renderList({
-        ...defaultCourseListData,
-        showFilters: true,
-      });
-      const filterControls = screen.getByText('ActiveCourseFilters');
-      expect(filterControls).toBeInTheDocument();
+      renderList({ ...defaultCourseListData, showFilters: true });
+      expect(screen.getByText('ActiveCourseFilters')).toBeInTheDocument();
     });
   });
-  describe('with multiple courses and pages', () => {
-    it('render Course Cards and pagination', () => {
-      const visibleList = [{ cardId: 'foo' }, { cardId: 'bar' }, { cardId: 'baz' }];
-      const numPages = 3;
-      renderList({
-        ...defaultCourseListData,
-        visibleList,
-        numPages,
-      });
-      const courseCards = screen.getAllByText('CourseCard');
-      expect(courseCards.length).toEqual(visibleList.length);
-      const pageButtons = screen.getAllByRole('button', { name: /^Page/i });
-      expect(pageButtons.length).toBe(numPages);
+
+  describe('with multiple courses', () => {
+    it('renders a CourseCard per course, grouped into sections', () => {
+      const fullList = [{ cardId: 'foo' }, { cardId: 'bar' }, { cardId: 'baz' }];
+      renderList({ ...defaultCourseListData, fullList, visibleList: fullList });
+      expect(screen.getAllByText('CourseCard')).toHaveLength(fullList.length);
     });
-  });
-  describe('collapsed with multiple courses and pages', () => {
-    it('should render correct components', () => {
-      const visibleList = [{ cardId: 'foo' }, { cardId: 'bar' }, { cardId: 'baz' }];
-      useIsCollapsed.mockReturnValueOnce(true);
-      renderList({
-        ...defaultCourseListData,
-        visibleList,
-        numPages: 3,
-        showFilters: true,
-      });
-      const courseCards = screen.getAllByText('CourseCard');
-      expect(courseCards.length).toEqual(visibleList.length);
-      const reducedPagination = screen.getByRole('button', { name: '1 of 3' });
-      expect(reducedPagination).toBeInTheDocument();
+
+    it('groups by status into the matching section headings', () => {
+      const fullList = [
+        { cardId: 'a', enrollment: { hasStarted: true }, courseRun: { isArchived: false } },
+        { cardId: 'b', enrollment: { hasStarted: false }, courseRun: { isArchived: false } },
+        { cardId: 'c', enrollment: { hasStarted: true }, courseRun: { isArchived: true } },
+      ];
+      renderList({ ...defaultCourseListData, fullList, visibleList: fullList });
+      expect(screen.getByText('In progress')).toBeInTheDocument();
+      expect(screen.getByText('Not started')).toBeInTheDocument();
+      expect(screen.getByText('Archived')).toBeInTheDocument();
+      expect(screen.getAllByText('CourseCard')).toHaveLength(fullList.length);
     });
   });
 });

@@ -2,16 +2,22 @@ import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { IconButton, Icon } from '@openedx/paragon';
 import { Bookmark, BookmarkBorder } from '@openedx/paragon/icons';
 
 import messages from '../messages';
 
-const STORAGE_KEY = 'rooman.dashboard.favorites';
+// Scope favourites by the authenticated user so a shared browser (or
+// logout/login) never leaks one learner's saved courses to another.
+const storageKey = () => {
+  const userId = getAuthenticatedUser()?.userId ?? 'anonymous';
+  return `rooman.dashboard.favorites.${userId}`;
+};
 
 const readFavorites = () => {
   try {
-    return JSON.parse(window.localStorage.getItem(STORAGE_KEY)) || {};
+    return JSON.parse(window.localStorage.getItem(storageKey())) || {};
   } catch (e) {
     return {};
   }
@@ -34,7 +40,7 @@ export const CourseCardFavorite = ({ cardId }) => {
       favorites[cardId] = true;
     }
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+      window.localStorage.setItem(storageKey(), JSON.stringify(favorites));
     } catch (e) { /* storage unavailable — keep in-memory state only */ }
     setIsFavorite(Boolean(favorites[cardId]));
   }, [cardId]);
