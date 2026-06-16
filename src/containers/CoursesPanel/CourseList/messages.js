@@ -16,6 +16,16 @@ const messages = defineMessages({
     description: 'Heading for the group of courses whose run has ended (archived)',
     defaultMessage: 'Archived',
   },
+  scrollLeft: {
+    id: 'learner-dash.courseList.scrollLeft',
+    description: 'Accessible label for the button that scrolls a course row left',
+    defaultMessage: 'Scroll left',
+  },
+  scrollRight: {
+    id: 'learner-dash.courseList.scrollRight',
+    description: 'Accessible label for the button that scrolls a course row right',
+    defaultMessage: 'Scroll right',
+  },
 });
 
 export default messages;

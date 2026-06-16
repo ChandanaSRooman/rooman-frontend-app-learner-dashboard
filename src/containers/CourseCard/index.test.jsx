@@ -4,20 +4,16 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import CourseCard from '.';
 
 const namesMockComponents = [
-  'CourseCardBanners',
   'CourseCardImage',
   'CourseCardMenu',
   'CourseCardActions',
-  'CourseCardDetails',
   'CourseCardTitle',
   'CourseCardFavorite',
 ];
 
-jest.mock('./components/CourseCardBanners', () => jest.fn(() => <div>CourseCardBanners</div>));
 jest.mock('./components/CourseCardImage', () => jest.fn(() => <div>CourseCardImage</div>));
 jest.mock('./components/CourseCardMenu', () => jest.fn(() => <div>CourseCardMenu</div>));
 jest.mock('./components/CourseCardActions', () => jest.fn(() => <div>CourseCardActions</div>));
-jest.mock('./components/CourseCardDetails', () => jest.fn(() => <div>CourseCardDetails</div>));
 jest.mock('./components/CourseCardTitle', () => jest.fn(() => <div>CourseCardTitle</div>));
 jest.mock('./components/CourseCardFavorite', () => jest.fn(() => <div>CourseCardFavorite</div>));
 
@@ -34,10 +30,16 @@ describe('CourseCard component', () => {
     expect(cardImage.parentElement).toHaveClass('course-card-media');
   });
 
-  it('renders courseCard child components', () => {
+  it('renders the clean set of courseCard child components', () => {
     renderCard();
     namesMockComponents.forEach((courseCardName) => {
       expect(screen.getByText(courseCardName)).toBeInTheDocument();
     });
+  });
+
+  it('omits the provider details and status banners for an uncluttered card', () => {
+    renderCard();
+    expect(screen.queryByText('CourseCardDetails')).not.toBeInTheDocument();
+    expect(screen.queryByText('CourseCardBanners')).not.toBeInTheDocument();
   });
 });

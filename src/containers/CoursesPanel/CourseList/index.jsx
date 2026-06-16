@@ -1,7 +1,11 @@
-import React from 'react';
+import React, {
+  useCallback, useEffect, useRef, useState,
+} from 'react';
 import PropTypes from 'prop-types';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { Icon, IconButton } from '@openedx/paragon';
+import { ChevronLeft, ChevronRight } from '@openedx/paragon/icons';
 import {
   ActiveCourseFilters,
 } from 'containers/CourseFilterControls';
@@ -30,17 +34,66 @@ const groupCourses = (list) => {
 };
 
 const CourseSection = ({ title, courses }) => {
+  const { formatMessage } = useIntl();
+  const scrollerRef = useRef(null);
+  const [canLeft, setCanLeft] = useState(false);
+  const [canRight, setCanRight] = useState(false);
+
+  const updateArrows = useCallback(() => {
+    const el = scrollerRef.current;
+    if (!el) { return; }
+    setCanLeft(el.scrollLeft > 4);
+    setCanRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    updateArrows();
+    const el = scrollerRef.current;
+    if (!el) { return undefined; }
+    el.addEventListener('scroll', updateArrows, { passive: true });
+    window.addEventListener('resize', updateArrows);
+    return () => {
+      el.removeEventListener('scroll', updateArrows);
+      window.removeEventListener('resize', updateArrows);
+    };
+  }, [updateArrows, courses.length]);
+
+  const scrollByPage = (direction) => {
+    const el = scrollerRef.current;
+    if (!el) { return; }
+    el.scrollBy({ left: direction * Math.max(el.clientWidth * 0.8, 320), behavior: 'smooth' });
+  };
+
   if (!courses.length) { return null; }
+
   return (
     <section className="course-section">
       <div className="course-section-heading">
         <h2 className="course-section-title">{title}</h2>
         <span className="course-section-count">{courses.length}</span>
       </div>
-      <div className="course-card-grid">
-        {courses.map(({ cardId }) => (
-          <CourseCard key={cardId} cardId={cardId} />
-        ))}
+      <div className="course-row">
+        <IconButton
+          src={ChevronLeft}
+          iconAs={Icon}
+          alt={formatMessage(messages.scrollLeft)}
+          onClick={() => scrollByPage(-1)}
+          className={`course-row-arrow course-row-arrow--left${canLeft ? '' : ' is-hidden'}`}
+          data-testid="course-row-scroll-left"
+        />
+        <div className="course-card-grid" ref={scrollerRef}>
+          {courses.map(({ cardId }) => (
+            <CourseCard key={cardId} cardId={cardId} />
+          ))}
+        </div>
+        <IconButton
+          src={ChevronRight}
+          iconAs={Icon}
+          alt={formatMessage(messages.scrollRight)}
+          onClick={() => scrollByPage(1)}
+          className={`course-row-arrow course-row-arrow--right${canRight ? '' : ' is-hidden'}`}
+          data-testid="course-row-scroll-right"
+        />
       </div>
     </section>
   );

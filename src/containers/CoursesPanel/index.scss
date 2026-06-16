@@ -44,6 +44,32 @@
   border-radius: 999px;
 }
 
+// Row wrapper holds the scroller plus the left/right scroll-arrow buttons.
+.course-row {
+  position: relative;
+}
+
+// Scroll-arrow buttons — overlaid on the row edges so it's obvious the row
+// scrolls. Hidden when there's nothing more to scroll in that direction.
+.course-row-arrow.btn-icon {
+  position: absolute;
+  top: 84px; // ~centre of a 300px card's 16:9 thumbnail
+  z-index: 3;
+  background: #fff !important;
+  border: 1px solid var(--pgn-color-light-400, #e2e2e2) !important;
+  border-radius: 50% !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, .18) !important;
+  width: 40px;
+  height: 40px;
+
+  &:hover { background: #f7f8fa !important; }
+
+  &.course-row-arrow--left { left: -8px; }
+  &.course-row-arrow--right { right: -8px; }
+
+  &.is-hidden { display: none !important; }
+}
+
 // Horizontal scroller: cards sit in a single row that scrolls sideways
 // rather than wrapping onto multiple lines.
 .course-card-grid {

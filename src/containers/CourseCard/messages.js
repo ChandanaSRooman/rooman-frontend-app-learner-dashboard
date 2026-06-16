@@ -21,11 +21,6 @@ const messages = defineMessages({
     description: 'Course card verified banner ribbon alt-text',
     defaultMessage: 'ID Verified Ribbon/Badge',
   },
-  typeBadge: {
-    id: 'learner-dash.courseCard.typeBadge',
-    description: 'Small badge shown on the course card thumbnail labelling the item as a course',
-    defaultMessage: 'Course',
-  },
   favoriteAlt: {
     id: 'learner-dash.courseCard.favoriteAlt',
     description: 'Accessible label for the button that marks a course as a favourite',
