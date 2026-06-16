@@ -15,14 +15,23 @@ import messages from './messages';
 
 // Split the (already filtered + sorted) list into the dashboard groups.
 // Each item is a transformed course object carrying its own `cardId`.
+// "Completed" (passed / certificate earned) is distinct from "Archived"
+// (the course run has ended, regardless of whether the learner finished).
 const groupCourses = (list) => {
   const inProgress = [];
   const notStarted = [];
+  const completed = [];
   const archived = [];
   list.forEach((course) => {
+    const cert = course?.certificate || {};
+    const isCompleted = Boolean(
+      course?.gradeData?.isPassing || cert.isDownloadable || cert.isEarned,
+    );
     const isArchived = course?.courseRun?.isArchived || false;
     const hasStarted = course?.enrollment?.hasStarted || false;
-    if (isArchived) {
+    if (isCompleted) {
+      completed.push(course);
+    } else if (isArchived) {
       archived.push(course);
     } else if (hasStarted) {
       inProgress.push(course);
@@ -30,7 +39,9 @@ const groupCourses = (list) => {
       notStarted.push(course);
     }
   });
-  return { inProgress, notStarted, archived };
+  return {
+    inProgress, notStarted, completed, archived,
+  };
 };
 
 const CourseSection = ({ title, courses }) => {
@@ -109,7 +120,9 @@ export const CourseList = ({ courseListData }) => {
 
   // Group the complete filtered/sorted set (not the paginated page) so the
   // section headings and counts reflect group totals rather than per-page slices.
-  const { inProgress, notStarted, archived } = groupCourses(fullList ?? visibleList ?? []);
+  const {
+    inProgress, notStarted, completed, archived,
+  } = groupCourses(fullList ?? visibleList ?? []);
 
   return (
     <>
@@ -121,6 +134,7 @@ export const CourseList = ({ courseListData }) => {
       <div className="d-flex flex-column flex-grow-1">
         <CourseSection title={formatMessage(messages.inProgressSection)} courses={inProgress} />
         <CourseSection title={formatMessage(messages.notStartedSection)} courses={notStarted} />
+        <CourseSection title={formatMessage(messages.completedSection)} courses={completed} />
         <CourseSection title={formatMessage(messages.archivedSection)} courses={archived} />
       </div>
     </>
