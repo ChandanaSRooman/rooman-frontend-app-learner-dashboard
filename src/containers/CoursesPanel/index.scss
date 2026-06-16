@@ -11,23 +11,43 @@
   margin: var(--pgn-spacing-spacer-3) 0;
 }
 
-// ── Sectioned grid (DeepLearning.AI-style) ────────────────────────────────────
+// ── Sectioned grid ────────────────────────────────────────────────────────────
 .course-section {
-  margin-bottom: var(--pgn-spacing-spacer-5, 2rem);
+  margin-bottom: 36px;
+}
+
+// A divider + extra space between consecutive sections so each group reads as
+// clearly distinct (the rows alone were hard to tell apart).
+.course-section + .course-section {
+  border-top: 1px solid var(--pgn-color-light-400, #e2e2e2);
+  padding-top: 28px;
 }
 
 .course-section-heading {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 4px 0 16px;
+  margin: 0 0 18px;
 }
 
 .course-section-title {
-  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.3rem;
   font-weight: 700;
   color: #1c1d1f;
   margin: 0;
+  padding-left: 12px;
+
+  // Accent bar before the title for quick visual scanning of sections.
+  &::before {
+    content: '';
+    width: 4px;
+    height: 1.05em;
+    border-radius: 999px;
+    background: #0056d2;
+  }
 }
 
 .course-section-count {
@@ -42,6 +62,32 @@
   font-size: .72rem;
   font-weight: 700;
   border-radius: 999px;
+}
+
+// Row wrapper holds the scroller plus the left/right scroll-arrow buttons.
+.course-row {
+  position: relative;
+}
+
+// Scroll-arrow buttons — overlaid on the row edges so it's obvious the row
+// scrolls. Hidden when there's nothing more to scroll in that direction.
+.course-row-arrow.btn-icon {
+  position: absolute;
+  top: 84px; // ~centre of a 300px card's 16:9 thumbnail
+  z-index: 3;
+  background: #fff !important;
+  border: 1px solid var(--pgn-color-light-400, #e2e2e2) !important;
+  border-radius: 50% !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, .18) !important;
+  width: 40px;
+  height: 40px;
+
+  &:hover { background: #f7f8fa !important; }
+
+  &.course-row-arrow--left { left: -8px; }
+  &.course-row-arrow--right { right: -8px; }
+
+  &.is-hidden { display: none !important; }
 }
 
 // Horizontal scroller: cards sit in a single row that scrolls sideways

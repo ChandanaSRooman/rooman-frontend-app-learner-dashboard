@@ -21,6 +21,11 @@ const messages = defineMessages({
     description: 'Course card select-session button text',
     defaultMessage: 'Select Session',
   },
+  viewCertificate: {
+    id: 'learner-dash.courseCard.actions.viewCertificate',
+    description: 'Course card button text shown once the course is complete and the certificate is ready',
+    defaultMessage: 'View certificate',
+  },
 });
 
 export default messages;

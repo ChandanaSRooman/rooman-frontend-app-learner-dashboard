@@ -12,6 +12,7 @@ jest.mock('./SelectSessionButton', () => jest.fn(() => <div>SelectSessionButton<
 jest.mock('./ViewCourseButton', () => jest.fn(() => <div>ViewCourseButton</div>));
 jest.mock('./BeginCourseButton', () => jest.fn(() => <div>BeginCourseButton</div>));
 jest.mock('./ResumeButton', () => jest.fn(() => <div>ResumeButton</div>));
+jest.mock('./ViewCertificateButton', () => jest.fn(() => <div>ViewCertificateButton</div>));
 
 const cardId = 'test-card-id';
 const props = { cardId };
@@ -22,10 +23,12 @@ describe('CourseCardActions', () => {
     isFulfilled = false,
     isArchived = false,
     hasStarted = false,
+    certificate = {},
   } = {}) => {
     useCourseData.mockReturnValueOnce({
       enrollment: { hasStarted },
       courseRun: { isArchived },
+      certificate,
       entitlement: isEntitlement !== null ? { isEntitlement, isFulfilled } : null,
     });
   };
@@ -38,6 +41,18 @@ describe('CourseCardActions', () => {
     });
   });
   describe('output', () => {
+    describe('certificate is ready', () => {
+      it('renders ViewCertificateButton instead of the resume/view action', () => {
+        mockHooks({
+          hasStarted: true,
+          isEntitlement: null,
+          certificate: { isDownloadable: true, certPreviewUrl: '/certificates/abc' },
+        });
+        renderComponent();
+        expect(screen.getByText('ViewCertificateButton')).toBeInTheDocument();
+        expect(screen.queryByText('ResumeButton')).not.toBeInTheDocument();
+      });
+    });
     describe('entitlement course', () => {
       it('renders ViewCourseButton if fulfilled', () => {
         mockHooks({ isEntitlement: true, isFulfilled: true });

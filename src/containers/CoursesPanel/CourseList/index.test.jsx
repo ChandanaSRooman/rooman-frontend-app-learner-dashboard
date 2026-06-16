@@ -49,12 +49,21 @@ describe('CourseList', () => {
         { cardId: 'a', enrollment: { hasStarted: true }, courseRun: { isArchived: false } },
         { cardId: 'b', enrollment: { hasStarted: false }, courseRun: { isArchived: false } },
         { cardId: 'c', enrollment: { hasStarted: true }, courseRun: { isArchived: true } },
+        { cardId: 'd', gradeData: { isPassing: true }, courseRun: { isArchived: false } },
       ];
       renderList({ ...defaultCourseListData, fullList, visibleList: fullList });
       expect(screen.getByText('In progress')).toBeInTheDocument();
       expect(screen.getByText('Not started')).toBeInTheDocument();
+      expect(screen.getByText('Completed')).toBeInTheDocument();
       expect(screen.getByText('Archived')).toBeInTheDocument();
       expect(screen.getAllByText('CourseCard')).toHaveLength(fullList.length);
+    });
+
+    it('renders left/right scroll arrows for a section', () => {
+      const fullList = [{ cardId: 'foo' }, { cardId: 'bar' }];
+      renderList({ ...defaultCourseListData, fullList, visibleList: fullList });
+      expect(screen.getByTestId('course-row-scroll-left')).toBeInTheDocument();
+      expect(screen.getByTestId('course-row-scroll-right')).toBeInTheDocument();
     });
   });
 });

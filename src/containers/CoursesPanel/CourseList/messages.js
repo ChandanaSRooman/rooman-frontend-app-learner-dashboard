@@ -11,10 +11,25 @@ const messages = defineMessages({
     description: 'Heading for the group of enrolled courses the learner has not started yet',
     defaultMessage: 'Not started',
   },
+  completedSection: {
+    id: 'learner-dash.courseList.section.completed',
+    description: 'Heading for the group of courses the learner has completed (passed / earned a certificate)',
+    defaultMessage: 'Completed',
+  },
   archivedSection: {
     id: 'learner-dash.courseList.section.archived',
     description: 'Heading for the group of courses whose run has ended (archived)',
     defaultMessage: 'Archived',
+  },
+  scrollLeft: {
+    id: 'learner-dash.courseList.scrollLeft',
+    description: 'Accessible label for the button that scrolls a course row left',
+    defaultMessage: 'Scroll left',
+  },
+  scrollRight: {
+    id: 'learner-dash.courseList.scrollRight',
+    description: 'Accessible label for the button that scrolls a course row right',
+    defaultMessage: 'Scroll right',
   },
 });
 

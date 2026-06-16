@@ -1,27 +1,13 @@
 .course-list-column {
   padding: 0 var(--pgn-spacing-spacer-4);
+  // The right widget sidebar is hidden, so the course list spans the full
+  // width edge-to-edge regardless of the Bootstrap col-xl-8/12 it's given.
+  flex: 0 0 100% !important;
+  max-width: 100% !important;
 }
 
+// Hide the right "Looking for a new challenge?" widget panel entirely — the
+// dashboard is just the course rows now.
 .sidebar-column {
-  padding: 0 var(--pgn-spacing-spacer-3) 0 var(--pgn-spacing-spacer-1);
-
-  &.not-collapsed {
-    padding-top: var(--pgn-spacing-spacer-2);
-
-    & >:first-child {
-      margin-top: var(--pgn-spacing-spacer-5-5);
-    }
-  }
-}
-
-@media (--pgn-size-breakpoint-max-width-lg) {
-  .sidebar-column {
-    // grid are inheriting dir="ltr" from the body, so we need to override it
-    [dir=ltr] & {
-      padding: 0 var(--pgn-spacing-spacer-3);
-    }
-    [dir=rtl] & {
-      padding: 0 var(--pgn-spacing-spacer-3);
-    }
-  }
+  display: none !important;
 }
