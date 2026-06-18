@@ -24,7 +24,9 @@
     position: relative;
     aspect-ratio: 16 / 9;
     overflow: hidden;
-    background: linear-gradient(135deg, #0b1b3a 0%, #14306e 100%);
+    // Light placeholder shown when a course has no banner image (the empty
+    // <img>'s "Course thumbnail" alt text reads dark over this light gradient).
+    background: linear-gradient(135deg, #eef3fb 0%, #d7e3f6 100%);
 
     .pgn__card-wrapper-image-cap {
       display: block;
